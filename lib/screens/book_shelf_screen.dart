@@ -1,6 +1,5 @@
 import 'package:bookshelf/constants/categories.dart';
 import 'package:bookshelf/constants/colors/theme_color.dart';
-import 'package:bookshelf/repository/sample_content.dart';
 import 'package:bookshelf/widgets/book_shelf.dart';
 import 'package:flutter/material.dart';
 
@@ -17,7 +16,7 @@ class BookShelfScreen extends StatelessWidget {
       body: ListView.builder(
         itemCount: category.length,
         itemBuilder: (context, index) {
-          return BookShelf(category[index], featured);
+          return BookShelf(category[index]);
         },
       ),
     );

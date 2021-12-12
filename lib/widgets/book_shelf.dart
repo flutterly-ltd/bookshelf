@@ -1,11 +1,12 @@
 import 'package:bookshelf/constants/colors/theme_color.dart';
 import 'package:bookshelf/models/book_model.dart';
+import 'package:bookshelf/repository/sample_content.dart';
+import 'package:bookshelf/widgets/book_view.dart';
 import 'package:flutter/material.dart';
 
 class BookShelf extends StatelessWidget {
-  const BookShelf(this.category, this.books, {Key? key}) : super(key: key);
+  const BookShelf(this.category, {Key? key}) : super(key: key);
   final String category;
-  final List<Book> books;
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +20,6 @@ class BookShelf extends StatelessWidget {
           const _BookShelfSlab(),
           _BookList(
             category: category,
-            books: books,
           )
         ],
       ),
@@ -28,11 +28,12 @@ class BookShelf extends StatelessWidget {
 }
 
 class _BookList extends StatefulWidget {
-  const _BookList({Key? key, required this.category, required this.books})
-      : super(key: key);
+  const _BookList({
+    Key? key,
+    required this.category,
+  }) : super(key: key);
 
   final String category;
-  final List<Book> books;
 
   @override
   State<_BookList> createState() => _BookListState();
@@ -48,9 +49,10 @@ class _BookListState extends State<_BookList> {
   }
 
   getCategotyBooks() {
-    for (var element in widget.books) {
-      if (element.bookCategory.contains(widget.category))
+    for (var element in books) {
+      if (element.bookCategory.contains(widget.category)) {
         categoryList.add(element);
+      }
     }
   }
 
@@ -60,7 +62,7 @@ class _BookListState extends State<_BookList> {
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        _SectionTitle(widget.category),
+        SafeArea(child: _SectionTitle(widget.category)),
         SizedBox(
           height: 250,
           child: ListView.builder(
@@ -69,40 +71,8 @@ class _BookListState extends State<_BookList> {
             itemBuilder: (context, index) {
               return Padding(
                 padding: const EdgeInsets.only(bottom: 50.0, left: 16, top: 10),
-                child: Container(
-                  width: 130,
-                  decoration: BoxDecoration(
-                      color: foregroundLight,
-                      image: DecorationImage(
-                          image: NetworkImage(categoryList[index].bookCover),
-                          fit: BoxFit.cover),
-                      boxShadow: const [
-                        BoxShadow(
-                            blurRadius: 10,
-                            color: Colors.grey,
-                            offset: Offset(5, 0))
-                      ]),
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          categoryList[index].bookTitle,
-                          style: const TextStyle(color: Colors.white),
-                          maxLines: 3,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        Text(
-                          categoryList[index].bookAuthor,
-                          style:
-                              const TextStyle(color: Colors.white, fontSize: 8),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        )
-                      ],
-                    ),
-                  ),
+                child: BookView(
+                  id: categoryList[index].id,
                 ),
               );
             },

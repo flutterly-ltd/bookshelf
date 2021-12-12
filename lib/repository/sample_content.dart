@@ -1,6 +1,6 @@
 import 'package:bookshelf/models/book_model.dart';
 
-List<Book> featured = [
+List<Book> books = [
   Book(
       001,
       ["Featured", "Fiction"],
