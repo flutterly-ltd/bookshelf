@@ -20,7 +20,9 @@ class BookDetailScreen extends StatelessWidget {
         children: [
           Container(
             height: 300,
-            color: foregroundLight,
+            color: (Theme.of(context).brightness == Brightness.light)
+                ? foregroundLight
+                : foregroundDark,
             child: Row(
               children: [
                 Padding(
@@ -59,9 +61,14 @@ class BookDetailScreen extends StatelessWidget {
                         ),
                       ),
                       Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
                         children: book.bookCategory.map((e) {
-                          return Padding(
-                            padding: const EdgeInsets.only(right: 8.0),
+                          return GestureDetector(
+                            onTap: () {
+                              Navigator.popAndPushNamed(context, "/category",
+                                  arguments: e);
+                            },
                             child: Chip(
                                 elevation: 0,
                                 visualDensity: VisualDensity.compact,

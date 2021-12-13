@@ -10,10 +10,10 @@ class BookShelf extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       height: 350,
       width: MediaQuery.of(context).size.width,
-      color: backgroundLight,
+      //color: backgroundLight,
       child: Stack(
         fit: StackFit.passthrough,
         children: [
@@ -34,41 +34,61 @@ class _BookList extends StatelessWidget {
   }) : super(key: key);
 
   final String category;
-  final List<Book> categoryList = [];
+  final List<Book> _categoryList = [];
 
   //Filter books list based on the specific category and add the books to the category list
 
-  getCategoryBooks() {
+  _getCategoryBooks() {
     for (var element in books) {
       if (element.bookCategory.contains(category)) {
-        categoryList.add(element);
+        _categoryList.add(element);
       }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    getCategoryBooks();
+    _getCategoryBooks();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        SafeArea(child: _SectionTitle(category)),
+        SafeArea(
+            child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              _SectionTitle(category),
+              GestureDetector(
+                onTap: () {
+                  Navigator.popAndPushNamed(context, "/category",
+                      arguments: category);
+                },
+                child: Text(
+                  "View all",
+                  style: Theme.of(context).textTheme.caption,
+                ),
+              )
+            ],
+          ),
+        )),
         SizedBox(
           height: 250,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
-            itemCount: categoryList.length,
+            itemCount: _categoryList.length,
             itemBuilder: (context, index) {
               return Padding(
                 padding: const EdgeInsets.only(bottom: 50.0, left: 16, top: 10),
                 child: GestureDetector(
                   onTap: () {
                     Navigator.pushNamed(context, "/book-detail",
-                        arguments: categoryList[index].id);
+                        arguments: _categoryList[index].id);
                   },
                   child: BookView(
-                    categoryList[index].id,
+                    _categoryList[index].id,
                   ),
                 ),
               );
@@ -131,7 +151,11 @@ class _BookShelfTop extends StatelessWidget {
         // constraints: const BoxConstraints(maxHeight: 50),
         height: 30,
         width: MediaQuery.of(context).size.width,
-        decoration: BoxDecoration(color: shelfTopLight, boxShadow: const []));
+        decoration: BoxDecoration(
+          color: (Theme.of(context).brightness == Brightness.light)
+              ? shelfTopLight
+              : shelfTopDark,
+        ));
   }
 }
 
@@ -150,13 +174,18 @@ class _BookShelfFront extends StatelessWidget {
           // constraints: const BoxConstraints(maxHeight: 20),
           height: 20,
           width: MediaQuery.of(context).size.width,
-          decoration: BoxDecoration(color: shelfFrontLight, boxShadow: const [
-            BoxShadow(
-              blurRadius: 30,
-              color: Colors.grey,
-              offset: Offset(30, 25),
-            )
-          ])),
+          decoration: BoxDecoration(
+              color: (Theme.of(context).brightness == Brightness.light)
+                  ? shelfFrontLight
+                  : shelfFrontDark,
+              boxShadow: [
+                if (Theme.of(context).brightness == Brightness.light)
+                  BoxShadow(
+                    blurRadius: 30,
+                    color: Theme.of(context).shadowColor,
+                    offset: const Offset(30, 25),
+                  )
+              ])),
     );
   }
 }

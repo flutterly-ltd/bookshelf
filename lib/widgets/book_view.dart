@@ -21,8 +21,10 @@ class BookView extends StatelessWidget {
           color: foregroundLight,
           image: DecorationImage(
               image: NetworkImage(book.bookCover), fit: BoxFit.cover),
-          boxShadow: const [
-            BoxShadow(blurRadius: 10, color: Colors.grey, offset: Offset(5, 0))
+          boxShadow: [
+            if (Theme.of(context).brightness == Brightness.light)
+              const BoxShadow(
+                  blurRadius: 10, color: Colors.grey, offset: Offset(5, 0))
           ]),
       child: Padding(
         padding: const EdgeInsets.all(8.0),

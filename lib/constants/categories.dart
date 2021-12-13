@@ -1,1 +1,1 @@
-List category = ["Short Stories"];
+List category = ["Short Stories", "Poetry"];

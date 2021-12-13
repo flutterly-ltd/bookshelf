@@ -1,5 +1,6 @@
 import 'package:bookshelf/constants/categories.dart';
 import 'package:bookshelf/widgets/book_shelf.dart';
+import 'package:bookshelf/widgets/main_drawer.dart';
 import 'package:flutter/material.dart';
 
 class BookShelfScreen extends StatelessWidget {
@@ -22,16 +23,5 @@ class BookShelfScreen extends StatelessWidget {
         },
       ),
     );
-  }
-}
-
-class MainDrawer extends StatelessWidget {
-  const MainDrawer({
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return const Drawer();
   }
 }

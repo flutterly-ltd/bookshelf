@@ -3,17 +3,18 @@ import 'package:flutter/material.dart';
 
 ThemeData darkTheme = ThemeData(
     brightness: Brightness.dark,
-    scaffoldBackgroundColor: backgroundLight,
-    backgroundColor: Colors.white,
+    scaffoldBackgroundColor: backgroundDark,
+    backgroundColor: Colors.black,
+    shadowColor: Colors.amber[600]!,
     drawerTheme: drawerDarkTheme,
     appBarTheme: appbarDarkTheme);
 
 AppBarTheme appbarDarkTheme = AppBarTheme(
-    backgroundColor: backgroundLight,
+    backgroundColor: backgroundDark,
     elevation: 0,
-    iconTheme: const IconThemeData(color: Color(0xff2c1810)),
+    iconTheme: const IconThemeData(color: Colors.blueGrey),
     titleTextStyle:
-        const TextStyle(color: Color(0xff2c1810), fontWeight: FontWeight.bold));
+        const TextStyle(color: Colors.blueGrey, fontWeight: FontWeight.bold));
 
 DrawerThemeData drawerDarkTheme =
-    DrawerThemeData(backgroundColor: backgroundLight);
+    DrawerThemeData(backgroundColor: foregroundDark);

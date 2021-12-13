@@ -2,6 +2,7 @@ import 'package:bookshelf/constants/themes/dark_theme.dart';
 import 'package:bookshelf/constants/themes/light_theme.dart';
 import 'package:bookshelf/screens/book_detail_screen.dart';
 import 'package:bookshelf/screens/book_shelf_screen.dart';
+import 'package:bookshelf/screens/category_screen.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -16,11 +17,13 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Book Shelf',
+      themeMode: ThemeMode.system,
       theme: lightTheme,
       darkTheme: darkTheme,
       routes: {
         "/": (context) => const BookShelfScreen(),
         "/book-detail": (context) => const BookDetailScreen(),
+        "/category": (context) => CategoryScreen(),
       },
     );
   }
