@@ -48,6 +48,7 @@ class _BookList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    _categoryList.clear();
     _getCategoryBooks();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

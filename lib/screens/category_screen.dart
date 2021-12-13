@@ -24,6 +24,7 @@ class CategoryScreen extends StatelessWidget {
     if (_category.isEmpty) {
       Navigator.popAndPushNamed(context, "/");
     }
+    _categoryList.clear();
     _getCategoryBooks(_category);
     return Scaffold(
         appBar: AppBar(
