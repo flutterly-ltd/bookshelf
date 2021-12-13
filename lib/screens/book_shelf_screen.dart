@@ -1,5 +1,4 @@
 import 'package:bookshelf/constants/categories.dart';
-import 'package:bookshelf/constants/colors/theme_color.dart';
 import 'package:bookshelf/widgets/book_shelf.dart';
 import 'package:flutter/material.dart';
 
@@ -10,9 +9,12 @@ class BookShelfScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        actions: const [UserAvatar()],
+        //actions: const [UserAvatar()],
+        title: const Text(
+          "Book Shelf",
+        ),
       ),
-      drawer: const Drawer(),
+      drawer: const MainDrawer(),
       body: ListView.builder(
         itemCount: category.length,
         itemBuilder: (context, index) {
@@ -23,18 +25,13 @@ class BookShelfScreen extends StatelessWidget {
   }
 }
 
-class UserAvatar extends StatelessWidget {
-  const UserAvatar({
+class MainDrawer extends StatelessWidget {
+  const MainDrawer({
     Key? key,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: CircleAvatar(
-        backgroundColor: foregroundLight,
-      ),
-    );
+    return const Drawer();
   }
 }

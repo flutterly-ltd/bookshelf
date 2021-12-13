@@ -27,30 +27,20 @@ class BookShelf extends StatelessWidget {
   }
 }
 
-class _BookList extends StatefulWidget {
-  const _BookList({
+class _BookList extends StatelessWidget {
+  _BookList({
     Key? key,
     required this.category,
   }) : super(key: key);
 
   final String category;
+  final List<Book> categoryList = [];
 
-  @override
-  State<_BookList> createState() => _BookListState();
-}
+  //Filter books list based on the specific category and add the books to the category list
 
-class _BookListState extends State<_BookList> {
-  List<Book> categoryList = [];
-
-  @override
-  void initState() {
-    super.initState();
-    getCategotyBooks();
-  }
-
-  getCategotyBooks() {
+  getCategoryBooks() {
     for (var element in books) {
-      if (element.bookCategory.contains(widget.category)) {
+      if (element.bookCategory.contains(category)) {
         categoryList.add(element);
       }
     }
@@ -58,11 +48,12 @@ class _BookListState extends State<_BookList> {
 
   @override
   Widget build(BuildContext context) {
+    getCategoryBooks();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        SafeArea(child: _SectionTitle(widget.category)),
+        SafeArea(child: _SectionTitle(category)),
         SizedBox(
           height: 250,
           child: ListView.builder(
@@ -71,8 +62,14 @@ class _BookListState extends State<_BookList> {
             itemBuilder: (context, index) {
               return Padding(
                 padding: const EdgeInsets.only(bottom: 50.0, left: 16, top: 10),
-                child: BookView(
-                  id: categoryList[index].id,
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.pushNamed(context, "/book-detail",
+                        arguments: categoryList[index].id);
+                  },
+                  child: BookView(
+                    categoryList[index].id,
+                  ),
                 ),
               );
             },
@@ -83,6 +80,8 @@ class _BookListState extends State<_BookList> {
   }
 }
 
+//-----------------------------------------------------------------------------------------------
+//Category / Section title
 class _SectionTitle extends StatelessWidget {
   const _SectionTitle(
     this.sectionTitle, {
@@ -103,6 +102,8 @@ class _SectionTitle extends StatelessWidget {
   }
 }
 
+//-----------------------------------------------------------------------------------------------
+//Book shelf slab design
 class _BookShelfSlab extends StatelessWidget {
   const _BookShelfSlab({
     Key? key,
@@ -117,6 +118,8 @@ class _BookShelfSlab extends StatelessWidget {
   }
 }
 
+//-----------------------------------------------------------------------------------------------
+//Top view of the book shelf slab
 class _BookShelfTop extends StatelessWidget {
   const _BookShelfTop({
     Key? key,
@@ -132,6 +135,8 @@ class _BookShelfTop extends StatelessWidget {
   }
 }
 
+//-----------------------------------------------------------------------------------------------
+//Front view of the book shelf slab
 class _BookShelfFront extends StatelessWidget {
   const _BookShelfFront({
     Key? key,

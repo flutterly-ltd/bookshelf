@@ -12,7 +12,8 @@ AppBarTheme appbarLightTheme = AppBarTheme(
     backgroundColor: backgroundLight,
     elevation: 0,
     iconTheme: const IconThemeData(color: Color(0xff2c1810)),
-    titleTextStyle: const TextStyle(color: Color(0xff2c1810)));
+    titleTextStyle:
+        const TextStyle(color: Color(0xff2c1810), fontWeight: FontWeight.bold));
 
 DrawerThemeData drawerLightTheme =
     DrawerThemeData(backgroundColor: backgroundLight);

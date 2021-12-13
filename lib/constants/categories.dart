@@ -1,1 +1,1 @@
-List category = ["Featured", "Fiction", "Non-Fiction", "Literature"];
+List category = ["Short Stories"];
