@@ -1,7 +1,10 @@
+import 'dart:html';
+
 import 'package:bookshelf/constants/colors/theme_color.dart';
 import 'package:bookshelf/models/book_model.dart';
 import 'package:bookshelf/repository/sample_content.dart';
 import 'package:bookshelf/widgets/book_view.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class BookShelf extends StatelessWidget {
@@ -10,10 +13,10 @@ class BookShelf extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       height: 350,
       width: MediaQuery.of(context).size.width,
-      color: backgroundLight,
+      //color: backgroundLight,
       child: Stack(
         fit: StackFit.passthrough,
         children: [
@@ -27,62 +30,95 @@ class BookShelf extends StatelessWidget {
   }
 }
 
-class _BookList extends StatefulWidget {
-  const _BookList({
+class _BookList extends StatelessWidget {
+  _BookList({
     Key? key,
     required this.category,
   }) : super(key: key);
 
   final String category;
+  final List<Book> _categoryList = [];
 
-  @override
-  State<_BookList> createState() => _BookListState();
-}
+  //Filter books list based on the specific category and add the books to the category list
 
-class _BookListState extends State<_BookList> {
-  List<Book> categoryList = [];
+  // _getCategoryBooks() {
+  //   for (var element in books) {
+  //     if (element.bookCategory.contains(category)) {
+  //       _categoryList.add(element);
+  //     }
+  //   }
+  // }
 
-  @override
-  void initState() {
-    super.initState();
-    getCategotyBooks();
-  }
+  Future getBooksList() async {
+    QuerySnapshot result = await FirebaseFirestore.instance
+        .collection("books")
+        .where("bookCategory", arrayContainsAny: [category])
+        .limit(10)
+        .get();
 
-  getCategotyBooks() {
-    for (var element in books) {
-      if (element.bookCategory.contains(widget.category)) {
-        categoryList.add(element);
-      }
-    }
+    return result.docs;
   }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [
-        SafeArea(child: _SectionTitle(widget.category)),
-        SizedBox(
-          height: 250,
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            itemCount: categoryList.length,
-            itemBuilder: (context, index) {
-              return Padding(
-                padding: const EdgeInsets.only(bottom: 50.0, left: 16, top: 10),
-                child: BookView(
-                  id: categoryList[index].id,
+    return FutureBuilder<QuerySnapshot>(
+        future: getBooksList(),
+        builder: (_, snapshot) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              SafeArea(
+                  child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    _SectionTitle(category),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.pushNamedAndRemoveUntil(
+                            context, "/category", (route) => false,
+                            arguments: category);
+                      },
+                      child: Text(
+                        "View all",
+                        style: Theme.of(context).textTheme.caption,
+                      ),
+                    )
+                  ],
                 ),
-              );
-            },
-          ),
-        )
-      ],
-    );
+              )),
+              SizedBox(
+                  height: 250,
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: snapshot.data?.length,
+                    itemBuilder: (context, index) {
+                      return Padding(
+                        padding: const EdgeInsets.only(
+                            bottom: 50.0, left: 16, top: 10),
+                        child: GestureDetector(
+                          onTap: () {
+                            Navigator.pushNamed(context, "/book-detail",
+                                arguments: _categoryList[index].id);
+                          },
+                          child: BookView(
+                            snapshot.data[index],
+                          ),
+                        ),
+                      );
+                    },
+                  ))
+            ],
+          );
+        });
   }
 }
 
+//-----------------------------------------------------------------------------------------------
+//Category / Section title
 class _SectionTitle extends StatelessWidget {
   const _SectionTitle(
     this.sectionTitle, {
@@ -103,6 +139,8 @@ class _SectionTitle extends StatelessWidget {
   }
 }
 
+//-----------------------------------------------------------------------------------------------
+//Book shelf slab design
 class _BookShelfSlab extends StatelessWidget {
   const _BookShelfSlab({
     Key? key,
@@ -117,6 +155,8 @@ class _BookShelfSlab extends StatelessWidget {
   }
 }
 
+//-----------------------------------------------------------------------------------------------
+//Top view of the book shelf slab
 class _BookShelfTop extends StatelessWidget {
   const _BookShelfTop({
     Key? key,
@@ -128,10 +168,16 @@ class _BookShelfTop extends StatelessWidget {
         // constraints: const BoxConstraints(maxHeight: 50),
         height: 30,
         width: MediaQuery.of(context).size.width,
-        decoration: BoxDecoration(color: shelfTopLight, boxShadow: const []));
+        decoration: BoxDecoration(
+          color: (Theme.of(context).brightness == Brightness.light)
+              ? shelfTopLight
+              : shelfTopDark,
+        ));
   }
 }
 
+//-----------------------------------------------------------------------------------------------
+//Front view of the book shelf slab
 class _BookShelfFront extends StatelessWidget {
   const _BookShelfFront({
     Key? key,
@@ -145,13 +191,18 @@ class _BookShelfFront extends StatelessWidget {
           // constraints: const BoxConstraints(maxHeight: 20),
           height: 20,
           width: MediaQuery.of(context).size.width,
-          decoration: BoxDecoration(color: shelfFrontLight, boxShadow: const [
-            BoxShadow(
-              blurRadius: 30,
-              color: Colors.grey,
-              offset: Offset(30, 25),
-            )
-          ])),
+          decoration: BoxDecoration(
+              color: (Theme.of(context).brightness == Brightness.light)
+                  ? shelfFrontLight
+                  : shelfFrontDark,
+              boxShadow: [
+                if (Theme.of(context).brightness == Brightness.light)
+                  BoxShadow(
+                    blurRadius: 30,
+                    color: Theme.of(context).shadowColor,
+                    offset: const Offset(30, 25),
+                  )
+              ])),
     );
   }
 }

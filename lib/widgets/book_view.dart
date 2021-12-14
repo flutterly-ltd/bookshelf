@@ -3,37 +3,28 @@ import 'package:bookshelf/models/book_model.dart';
 import 'package:bookshelf/repository/sample_content.dart';
 import 'package:flutter/material.dart';
 
-class BookView extends StatefulWidget {
-  const BookView({
+class BookView extends StatelessWidget {
+  const BookView(
+    this.id, {
     Key? key,
-    required this.id,
   }) : super(key: key);
 
   final int id;
-
-  @override
-  State<BookView> createState() => _BookViewState();
-}
-
-class _BookViewState extends State<BookView> {
-  late Book book;
-
-  @override
-  void initState() {
-    super.initState();
-    book = books.firstWhere((element) => element.id == widget.id);
-  }
+  //Book book;
 
   @override
   Widget build(BuildContext context) {
+    Book book = books.firstWhere((element) => element.id == id);
     return Container(
       width: 130,
       decoration: BoxDecoration(
           color: foregroundLight,
           image: DecorationImage(
               image: NetworkImage(book.bookCover), fit: BoxFit.cover),
-          boxShadow: const [
-            BoxShadow(blurRadius: 10, color: Colors.grey, offset: Offset(5, 0))
+          boxShadow: [
+            if (Theme.of(context).brightness == Brightness.light)
+              const BoxShadow(
+                  blurRadius: 10, color: Colors.grey, offset: Offset(5, 0))
           ]),
       child: Padding(
         padding: const EdgeInsets.all(8.0),
