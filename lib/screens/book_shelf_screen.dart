@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 
 class BookShelfScreen extends StatelessWidget {
   const BookShelfScreen({Key? key}) : super(key: key);
+  static const routename = "/";
 
   @override
   Widget build(BuildContext context) {

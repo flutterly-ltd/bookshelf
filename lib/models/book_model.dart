@@ -1,5 +1,5 @@
 class Book {
-  int id;
+  String id;
   List bookCategory;
   String bookTitle;
   String bookCover;

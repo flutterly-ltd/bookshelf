@@ -1,7 +1,10 @@
+import 'dart:html';
+
 import 'package:bookshelf/constants/colors/theme_color.dart';
 import 'package:bookshelf/models/book_model.dart';
 import 'package:bookshelf/repository/sample_content.dart';
 import 'package:bookshelf/widgets/book_view.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class BookShelf extends StatelessWidget {
@@ -38,66 +41,79 @@ class _BookList extends StatelessWidget {
 
   //Filter books list based on the specific category and add the books to the category list
 
-  _getCategoryBooks() {
-    for (var element in books) {
-      if (element.bookCategory.contains(category)) {
-        _categoryList.add(element);
-      }
-    }
+  // _getCategoryBooks() {
+  //   for (var element in books) {
+  //     if (element.bookCategory.contains(category)) {
+  //       _categoryList.add(element);
+  //     }
+  //   }
+  // }
+
+  Future getBooksList() async {
+    QuerySnapshot result = await FirebaseFirestore.instance
+        .collection("books")
+        .where("bookCategory", arrayContainsAny: [category])
+        .limit(10)
+        .get();
+
+    return result.docs;
   }
 
   @override
   Widget build(BuildContext context) {
-    _categoryList.clear();
-    _getCategoryBooks();
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [
-        SafeArea(
-            child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
+    return FutureBuilder<QuerySnapshot>(
+        future: getBooksList(),
+        builder: (_, snapshot) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              _SectionTitle(category),
-              GestureDetector(
-                onTap: () {
-                  Navigator.popAndPushNamed(context, "/category",
-                      arguments: category);
-                },
-                child: Text(
-                  "View all",
-                  style: Theme.of(context).textTheme.caption,
+              SafeArea(
+                  child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    _SectionTitle(category),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.pushNamedAndRemoveUntil(
+                            context, "/category", (route) => false,
+                            arguments: category);
+                      },
+                      child: Text(
+                        "View all",
+                        style: Theme.of(context).textTheme.caption,
+                      ),
+                    )
+                  ],
                 ),
-              )
+              )),
+              SizedBox(
+                  height: 250,
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: snapshot.data?.length,
+                    itemBuilder: (context, index) {
+                      return Padding(
+                        padding: const EdgeInsets.only(
+                            bottom: 50.0, left: 16, top: 10),
+                        child: GestureDetector(
+                          onTap: () {
+                            Navigator.pushNamed(context, "/book-detail",
+                                arguments: _categoryList[index].id);
+                          },
+                          child: BookView(
+                            snapshot.data[index],
+                          ),
+                        ),
+                      );
+                    },
+                  ))
             ],
-          ),
-        )),
-        SizedBox(
-          height: 250,
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            itemCount: _categoryList.length,
-            itemBuilder: (context, index) {
-              return Padding(
-                padding: const EdgeInsets.only(bottom: 50.0, left: 16, top: 10),
-                child: GestureDetector(
-                  onTap: () {
-                    Navigator.pushNamed(context, "/book-detail",
-                        arguments: _categoryList[index].id);
-                  },
-                  child: BookView(
-                    _categoryList[index].id,
-                  ),
-                ),
-              );
-            },
-          ),
-        )
-      ],
-    );
+          );
+        });
   }
 }
 

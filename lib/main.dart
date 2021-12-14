@@ -3,9 +3,16 @@ import 'package:bookshelf/constants/themes/light_theme.dart';
 import 'package:bookshelf/screens/book_detail_screen.dart';
 import 'package:bookshelf/screens/book_shelf_screen.dart';
 import 'package:bookshelf/screens/category_screen.dart';
+import 'package:bookshelf/screens/splash_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const MyApp());
 }
 
@@ -21,6 +28,7 @@ class MyApp extends StatelessWidget {
       theme: lightTheme,
       darkTheme: darkTheme,
       routes: {
+        //"/": (context) => SplashScreen(),
         "/": (context) => const BookShelfScreen(),
         "/book-detail": (context) => const BookDetailScreen(),
         "/category": (context) => CategoryScreen(),
